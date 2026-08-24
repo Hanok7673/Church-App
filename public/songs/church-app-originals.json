@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "catalogId": "church-app-originals-ne-v1",
+  "title": "Church App मौलिक नेपाली आराधना गीतहरू",
+  "language": "ne",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "sourceNote": "Church App को पूर्वावलोकनका लागि तयार गरिएका मौलिक नमुना शब्दहरू; कुनै प्रकाशित गीतपुस्तक वा गीतबाट प्रतिलिपि गरिएको होइन।",
+  "songs": [
+    {
+      "id": "bihaniko-pahilo-ujyalo",
+      "bookSection": "मौलिक",
+      "number": 1,
+      "titleNe": "बिहानीको पहिलो उज्यालो",
+      "titleRomanized": "Bihaniko Pahilo Ujyalo",
+      "category": "धन्यवाद",
+      "key": "G",
+      "timeSignature": "4/4",
+      "tempo": 74,
+      "bibleReference": { "label": "भजनसंग्रह ५:३", "hash": "PSA/5/3" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "G", "lyrics": "बिहानीको पहिलो उज्यालोसँगै" },
+            { "chord": "C", "lyrics": "मेरो हृदय तपाईंलाई खोज्छ" },
+            { "chord": "Em", "lyrics": "हरेक श्वासमा धन्यवाद बोकी" },
+            { "chord": "D", "lyrics": "आज फेरि तपाईंको नाउँ गाउँछ" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "G", "lyrics": "येशू, तपाईं मेरो नयाँ बिहान" },
+            { "chord": "D", "lyrics": "अँध्यारोमा ननिभ्ने आशा" },
+            { "chord": "Em", "lyrics": "जहाँ गए पनि हात समाती" },
+            { "chord": "C", "lyrics": "डोर्‍याउनुहोस् प्रेमको बाटोमा" }
+          ]
+        },
+        {
+          "kind": "verse",
+          "label": "अन्तरा २",
+          "lines": [
+            { "chord": "G", "lyrics": "हिजोका बोझहरू छोडेर आउँछु" },
+            { "chord": "C", "lyrics": "आजको दिन तपाईंलाई चढाउँछु" },
+            { "chord": "Em", "lyrics": "सानो सेवामा विश्वासयोग्य भई" },
+            { "chord": "D", "lyrics": "तपाईंको आनन्द सबैमा बाँड्छु" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ekai-sworma",
+      "bookSection": "मौलिक",
+      "number": 2,
+      "titleNe": "एकै स्वरमा",
+      "titleRomanized": "Ekai Sworma",
+      "category": "संगति",
+      "key": "D",
+      "timeSignature": "4/4",
+      "tempo": 92,
+      "bibleReference": { "label": "एफिसी ४:४", "hash": "EPH/4/4" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "D", "lyrics": "फरक बाटोबाट यहाँ आएका" },
+            { "chord": "G", "lyrics": "एउटै अनुग्रहले बोलाइएका" },
+            { "chord": "Bm", "lyrics": "हातमा हात र काँधमा काँध" },
+            { "chord": "A", "lyrics": "प्रेमले हामी जोडिएका" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "D", "lyrics": "एकै स्वरमा महिमा गाऔँ" },
+            { "chord": "A", "lyrics": "एकै मनले सेवा गरौँ" },
+            { "chord": "Bm", "lyrics": "ख्रीष्टमा हामी एउटै परिवार" },
+            { "chord": "G", "lyrics": "संसारलाई उहाँको प्रेम देखाऔँ" }
+          ]
+        },
+        {
+          "kind": "bridge",
+          "label": "सेतु",
+          "lines": [
+            { "chord": "Bm", "lyrics": "कोही एक्लो नरहोस् यहाँ" },
+            { "chord": "G", "lyrics": "कोही आशाविहीन नफर्कोस्" },
+            { "chord": "D", "lyrics": "हाम्रो घर खुला रहोस् सधैँ" },
+            { "chord": "A", "lyrics": "येशूको शान्तिले भरियोस्" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mero-pailako-deep",
+      "bookSection": "मौलिक",
+      "number": 3,
+      "titleNe": "मेरो पाइलाको दीप",
+      "titleRomanized": "Mero Pailako Deep",
+      "category": "वचन",
+      "key": "C",
+      "timeSignature": "6/8",
+      "tempo": 68,
+      "bibleReference": { "label": "भजनसंग्रह ११९:१०५", "hash": "PSA/119/105" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "C", "lyrics": "धेरै आवाजले घेरिएको बेला" },
+            { "chord": "Am", "lyrics": "तपाईंको वचन शान्त बोल्छ" },
+            { "chord": "F", "lyrics": "अनिश्चित बाटोको हरेक मोडमा" },
+            { "chord": "G", "lyrics": "सत्यको ज्योति अघि चल्छ" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "C", "lyrics": "तपाईंको वचन मेरो पाइलाको दीप" },
+            { "chord": "G", "lyrics": "मेरो यात्राको उज्यालो" },
+            { "chord": "Am", "lyrics": "हृदयमा राखी आज्ञा मान्दै" },
+            { "chord": "F", "lyrics": "हिँड्छु तपाईंले देखाएको बाटो" }
+          ]
+        },
+        {
+          "kind": "verse",
+          "label": "अन्तरा २",
+          "lines": [
+            { "chord": "C", "lyrics": "डरले मनको ढोका ढकढकाउँदा" },
+            { "chord": "Am", "lyrics": "प्रतिज्ञाले साहस जगाउँछ" },
+            { "chord": "F", "lyrics": "सानो विश्वास तपाईंमा राख्दा" },
+            { "chord": "G", "lyrics": "अर्को पाइला स्पष्ट बनाउँछ" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ashako-ghar",
+      "bookSection": "मौलिक",
+      "number": 4,
+      "titleNe": "आशाको घर",
+      "titleRomanized": "Ashako Ghar",
+      "category": "आशा",
+      "key": "A",
+      "timeSignature": "4/4",
+      "tempo": 80,
+      "bibleReference": { "label": "रोमी १५:१३", "hash": "ROM/15/13" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "A", "lyrics": "थाकेको मन लिएर आउँदा" },
+            { "chord": "D", "lyrics": "तपाईंको ढोका खुला भेटेँ" },
+            { "chord": "F#m", "lyrics": "आँसुका शब्द नबोल्दै पनि" },
+            { "chord": "E", "lyrics": "तपाईंले मेरो पुकार सुन्नुभयो" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "A", "lyrics": "तपाईं आशाको घर हुनुहुन्छ" },
+            { "chord": "E", "lyrics": "फर्केर आउने सुरक्षित ठाउँ" },
+            { "chord": "F#m", "lyrics": "शान्ति र आनन्दले फेरि भर्नुहोस्" },
+            { "chord": "D", "lyrics": "पवित्र आत्माको शक्तिद्वारा" }
+          ]
+        },
+        {
+          "kind": "bridge",
+          "label": "सेतु",
+          "lines": [
+            { "chord": "F#m", "lyrics": "आजको आँधी सधैँ रहँदैन" },
+            { "chord": "D", "lyrics": "तपाईंको प्रतिज्ञा कहिल्यै ढल्दैन" },
+            { "chord": "A", "lyrics": "आँखा उठाई अघि बढ्नेछु" },
+            { "chord": "E", "lyrics": "मेरो भविष्य तपाईंमै छ" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nadijhain-shanti",
+      "bookSection": "मौलिक",
+      "number": 5,
+      "titleNe": "नदीझैँ शान्ति",
+      "titleRomanized": "Nadijhain Shanti",
+      "category": "प्रार्थना",
+      "key": "E",
+      "timeSignature": "6/8",
+      "tempo": 62,
+      "bibleReference": { "label": "यूहन्ना १४:२७", "hash": "JHN/14/27" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "E", "lyrics": "मनको हलचल तपाईं अघि राख्छु" },
+            { "chord": "B", "lyrics": "चिन्ताका गाँठाहरू खोलिदिनुहोस्" },
+            { "chord": "C#m", "lyrics": "मेरो बुझाइभन्दा गहिरो गरी" },
+            { "chord": "A", "lyrics": "तपाईंको उपस्थितिले छोपिदिनुहोस्" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "E", "lyrics": "नदीझैँ शान्ति बग्न दिनुहोस्" },
+            { "chord": "B", "lyrics": "मेरो मन र घरभरि" },
+            { "chord": "C#m", "lyrics": "डरको स्वरभन्दा ठूलो बनोस्" },
+            { "chord": "A", "lyrics": "येशू, तपाईंको कोमल वाणी" }
+          ]
+        },
+        {
+          "kind": "verse",
+          "label": "अन्तरा २",
+          "lines": [
+            { "chord": "E", "lyrics": "बदल्न नसक्ने कुरा तपाईंलाई दिन्छु" },
+            { "chord": "B", "lyrics": "गर्नुपर्ने काममा बुद्धि माग्छु" },
+            { "chord": "C#m", "lyrics": "आजलाई पुग्ने अनुग्रह दिई" },
+            { "chord": "A", "lyrics": "विश्वासको विश्राम सिकाउनुहोस्" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tapainko-samu",
+      "bookSection": "मौलिक",
+      "number": 6,
+      "titleNe": "तपाईंको सामु",
+      "titleRomanized": "Tapainko Samu",
+      "category": "आराधना",
+      "key": "F",
+      "timeSignature": "4/4",
+      "tempo": 70,
+      "bibleReference": { "label": "भजनसंग्रह ९६:९", "hash": "PSA/96/9" },
+      "sections": [
+        {
+          "kind": "verse",
+          "label": "अन्तरा १",
+          "lines": [
+            { "chord": "F", "lyrics": "शब्दहरू थोरै भए पनि" },
+            { "chord": "Bb", "lyrics": "मेरो हृदय तपाईंले जान्नुहुन्छ" },
+            { "chord": "Dm", "lyrics": "उपलब्धिको मुकुट तल राखी" },
+            { "chord": "C", "lyrics": "कृतज्ञ भई नजिक आउँछु" }
+          ]
+        },
+        {
+          "kind": "chorus",
+          "label": "मुखडा",
+          "lines": [
+            { "chord": "F", "lyrics": "तपाईंको सामु निहुरिन्छु" },
+            { "chord": "C", "lyrics": "पवित्र, योग्य प्रभु" },
+            { "chord": "Dm", "lyrics": "मेरो जीवनको हरेक भाग" },
+            { "chord": "Bb", "lyrics": "जीवित भेटी बनोस् तपाईंलाई" }
+          ]
+        },
+        {
+          "kind": "bridge",
+          "label": "सेतु",
+          "lines": [
+            { "chord": "Dm", "lyrics": "मेरो समय, मेरो शक्ति" },
+            { "chord": "Bb", "lyrics": "मेरो योजना, मेरो इच्छा" },
+            { "chord": "F", "lyrics": "सबै तपाईंको हातमा राख्छु" },
+            { "chord": "C", "lyrics": "महिमा तपाईंलाई मात्र" }
+          ]
+        }
+      ]
+    }
+  ]
+}

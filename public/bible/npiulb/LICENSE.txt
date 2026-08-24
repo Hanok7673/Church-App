@@ -1,0 +1,25 @@
+Nepali Unlocked Literal Bible (NPIULB)
+
+Copyright © 2019 Door43 World Missions Community
+Translation by Door43 World Missions Community
+
+Source: https://ebible.org/Bible/details.php?id=npiulb
+Source files: https://ebible.org/Scriptures/npiulb_usfm.zip
+Source files dated: 12 December 2025
+
+This Bible translation is distributed under the Creative Commons
+Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0):
+https://creativecommons.org/licenses/by-sa/4.0/
+
+You may share and adapt the material provided that appropriate credit is given,
+changes are indicated, and contributions are distributed under the same license.
+
+Church App conversion note:
+The source USFM formatting is converted into per-book JSON files for reading in
+the app. Footnotes, cross-references, headings, and USFM formatting markers are
+not included in the reader data. No changes to Scripture wording are intended.
+This formatting conversion and its distributed output are available under the
+same CC BY-SA 4.0 license.
+
+Full source attribution and contributor details:
+https://ebible.org/Bible/details.php?id=npiulb
