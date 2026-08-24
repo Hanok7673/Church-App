@@ -16,6 +16,8 @@ The parallel Expo application demonstrates the new premium mobile design and the
 
 The preview is deliberately mobile-first and includes the compact Tamagui home experience, detailed member registration, private profile fields, optional church choice, and the pending ordinary-member approval model. Selecting a church never grants administrator or super-admin authority. The browser rendering is a development preview of the same phone UI; a dedicated web layout will be designed later.
 
+The mobile workspace intentionally targets Expo SDK 54 because the public Expo Go build on physical iPhones currently supports SDK 54. Start it with `pnpm dev:mobile -- --lan`, keep the terminal open, connect the phone and computer to the same Wi-Fi, and scan the QR from Expo Go. Newer Expo SDKs should be adopted after their matching Expo Go build is available or after the project moves to an EAS development build.
+
 ## Honest scope boundary
 
 Do not present the Fastify/PostgreSQL system as the production backend until a separate PostgreSQL target has been provisioned and its migration has run. The existing Supabase-backed app remains the functional demo and source of truth during this controlled migration. No production data was deleted or changed by the monorepo batch.
