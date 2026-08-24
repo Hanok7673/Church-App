@@ -3,8 +3,19 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const config = getDefaultConfig(__dirname);
+const canonicalModuleOrigin = path.join(__dirname, "package.json");
+const canonicalTamaguiPackages = new Set(["@tamagui/core", "@tamagui/web"]);
+
 config.resolver.unstable_enableSymlinks = true;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (canonicalTamaguiPackages.has(moduleName)) {
+    return context.resolveRequest(
+      { ...context, originModulePath: canonicalModuleOrigin },
+      moduleName,
+      platform,
+    );
+  }
+
   const isExpoRouterTypeOnlyRuntime =
     moduleName === "./types" &&
     context.originModulePath.replaceAll("\\", "/").includes("/expo-router/build/");

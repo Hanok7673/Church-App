@@ -1,4 +1,5 @@
 import "react-native-reanimated";
+import "../tamagui.config";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";

@@ -134,6 +134,9 @@ importers:
       '@tamagui/lucide-icons':
         specifier: 2.0.0-rc.26
         version: 2.0.0-rc.26(react-dom@19.1.0(react@19.1.0))(react-native-svg@15.12.1(react-native@0.81.5(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.1.17)(react@19.1.0)(supports-color@10.2.2))(react@19.1.0))(react@19.1.0)
+      '@tamagui/web':
+        specifier: 2.7.7
+        version: 2.7.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tanstack/react-query':
         specifier: 5.102.2
         version: 5.102.2(react@19.1.0)
