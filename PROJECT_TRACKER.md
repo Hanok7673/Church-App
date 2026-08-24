@@ -430,3 +430,9 @@ Last updated: 2026-08-23
 - Nepali Bible and worship lyrics must be used only with permission or a license that allows app distribution.
 - Recaps store references to Bible passages and songs rather than duplicating their text.
 - Each batch is implemented and reviewed before work starts on the next batch.
+
+### Local preview repair (complete)
+
+- [x] Replaced the Windows local `pnpm dev` path with a lightweight vinext/Vite preview that does not start the unstable Miniflare child process.
+- [x] Preserved the Cloudflare-specific local runner as `pnpm dev:cloudflare` for environment testing.
+- [x] Confirmed the local preview serves the interactive Church App and its JavaScript assets from the same process.
