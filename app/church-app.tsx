@@ -12,6 +12,13 @@ type AuthMode = "signin" | "signup";
 type SettingsSyncState = "idle" | "saving" | "saved" | "error";
 type Notice = { tone: "error" | "info" | "success"; text: string } | null;
 
+type SignupChurch = {
+  church_id: number;
+  church_name: string;
+  church_name_ne: string | null;
+  address: string | null;
+};
+
 type PreviewAccess = {
   method: AccessMethod;
   identifier: string;
@@ -137,6 +144,12 @@ export function ChurchApp() {
   const [previewAccess, setPreviewAccess] = useState<PreviewAccess | null>(null);
   const [fullName, setFullName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [permanentAddress, setPermanentAddress] = useState("");
+  const [temporaryAddress, setTemporaryAddress] = useState("");
+  const [sameAsPermanent, setSameAsPermanent] = useState(true);
+  const [signupChurchId, setSignupChurchId] = useState<number | "">("");
+  const [signupChurches, setSignupChurches] = useState<SignupChurch[]>([]);
   const [language, setLanguage] = useState<"ne" | "en">("ne");
   const [highContrast, setHighContrast] = useState(false);
   const [textScaleOverride, setTextScaleOverride] = useState<number | null>(null);
@@ -174,7 +187,7 @@ export function ChurchApp() {
 
     const [profileResult, privateResult, platformRoleResult] = await Promise.all([
       client.from("profiles").select("full_name, preferred_language").eq("id", user.id).maybeSingle(),
-      client.from("profile_private").select("date_of_birth, high_contrast, text_scale_override").eq("id", user.id).maybeSingle(),
+      client.from("profile_private").select("phone, date_of_birth, permanent_address, temporary_address, gender, high_contrast, text_scale_override").eq("id", user.id).maybeSingle(),
       client.from("platform_roles").select("role").eq("user_id", user.id).maybeSingle(),
     ]);
 
@@ -189,6 +202,11 @@ export function ChurchApp() {
     window.localStorage.removeItem(PROFILE_STORAGE_KEY);
     setFullName(profile?.full_name || (typeof user.user_metadata.full_name === "string" ? user.user_metadata.full_name : "Church App सदस्य"));
     setDateOfBirth(privateProfile?.date_of_birth ?? "");
+    setPhone(privateProfile?.phone?.replace(/^\+977/, "") ?? "");
+    setGender(privateProfile?.gender ?? "");
+    setPermanentAddress(privateProfile?.permanent_address ?? "");
+    setTemporaryAddress(privateProfile?.temporary_address ?? "");
+    setSameAsPermanent(Boolean(privateProfile?.permanent_address && privateProfile?.permanent_address === privateProfile?.temporary_address));
     setLanguage(profile?.preferred_language === "en" ? "en" : "ne");
     setHighContrast(privateProfile?.high_contrast ?? false);
     setTextScaleOverride(privateProfile?.text_scale_override ?? null);
@@ -299,6 +317,16 @@ export function ChurchApp() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    const client = getSupabaseBrowserClient();
+    if (!client) return;
+    void client.rpc("list_joinable_churches").then(({ data }) => {
+      if (active) setSignupChurches((data ?? []) as SignupChurch[]);
+    });
+    return () => { active = false; };
+  }, []);
+
   async function submitAuthentication(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const client = getSupabaseBrowserClient();
@@ -320,6 +348,26 @@ export function ChurchApp() {
       setNotice({ tone: "error", text: "खाता बनाउन आफ्नो पूरा नाम लेख्नुहोस्।" });
       return;
     }
+    if (authMode === "signup" && (!dateOfBirth || new Date(`${dateOfBirth}T00:00:00`) >= new Date())) {
+      setNotice({ tone: "error", text: "खाता बनाउन सही जन्ममिति छान्नुहोस्।" });
+      return;
+    }
+    if (authMode === "signup" && !/^(97|98)\d{8}$/.test(formattedPhone)) {
+      setNotice({ tone: "error", text: "९७ वा ९८ बाट सुरु हुने १० अङ्कको नेपाली मोबाइल नम्बर लेख्नुहोस्।" });
+      return;
+    }
+    if (authMode === "signup" && !["female", "male", "other", "prefer_not_to_say"].includes(gender)) {
+      setNotice({ tone: "error", text: "कृपया लिङ्गसम्बन्धी विकल्प छान्नुहोस्।" });
+      return;
+    }
+    if (authMode === "signup" && permanentAddress.trim().length < 3) {
+      setNotice({ tone: "error", text: "कृपया स्थायी ठेगाना लेख्नुहोस्।" });
+      return;
+    }
+    if (authMode === "signup" && !sameAsPermanent && temporaryAddress.trim().length < 3) {
+      setNotice({ tone: "error", text: "कृपया हाल बसोबास गर्ने अस्थायी ठेगाना लेख्नुहोस्।" });
+      return;
+    }
     if (authMode === "signup" && authPassword !== authPasswordConfirm) {
       setNotice({ tone: "error", text: "दुवै पासवर्ड मिलेनन्।" });
       return;
@@ -336,7 +384,17 @@ export function ChurchApp() {
         const { data, error } = await client.auth.signUp({
           email: normalizedEmail,
           password: authPassword,
-          options: { data: { full_name: fullName.trim() } },
+          options: {
+            data: {
+              full_name: fullName.trim(),
+              phone: `+977${formattedPhone}`,
+              date_of_birth: dateOfBirth,
+              gender,
+              permanent_address: permanentAddress.trim(),
+              temporary_address: sameAsPermanent ? permanentAddress.trim() : temporaryAddress.trim(),
+              church_id: signupChurchId === "" ? null : String(signupChurchId),
+            },
+          },
         });
         if (error) throw error;
         if (data.session?.user) {
@@ -428,6 +486,11 @@ export function ChurchApp() {
     setPreviewAccess(null);
     setFullName("");
     setDateOfBirth("");
+    setGender("");
+    setPermanentAddress("");
+    setTemporaryAddress("");
+    setSameAsPermanent(true);
+    setSignupChurchId("");
     setLanguage("ne");
     setHighContrast(false);
     setTextScaleOverride(null);
@@ -609,6 +672,25 @@ export function ChurchApp() {
                   <>
                     <label htmlFor="auth-full-name">पूरा नाम</label>
                     <input className="profile-input" id="auth-full-name" autoComplete="name" value={fullName} onChange={(event) => { setFullName(event.target.value); setNotice(null); }} placeholder="जस्तै: सारा तामाङ" />
+
+                    <div className="signup-field-grid">
+                      <label htmlFor="auth-birth-date">जन्ममिति<input className="profile-input" id="auth-birth-date" type="date" value={dateOfBirth} onChange={(event) => { setDateOfBirth(event.target.value); setNotice(null); }} max={new Date().toISOString().slice(0, 10)} /></label>
+                      <label htmlFor="auth-gender">लिङ्ग<select className="profile-input" id="auth-gender" value={gender} onChange={(event) => { setGender(event.target.value); setNotice(null); }}><option value="">छान्नुहोस्…</option><option value="female">महिला</option><option value="male">पुरुष</option><option value="other">अन्य</option><option value="prefer_not_to_say">भन्न नचाहने</option></select></label>
+                    </div>
+
+                    <label htmlFor="auth-phone">मोबाइल नम्बर</label>
+                    <div className="phone-input-wrap signup-phone-input"><span className="country-code"><b>🇳🇵</b> +977</span><input id="auth-phone" name="phone" type="tel" inputMode="numeric" autoComplete="tel-national" value={formattedPhone} onChange={(event) => { setPhone(event.target.value); setNotice(null); }} placeholder="98XXXXXXXX" /></div>
+
+                    <label htmlFor="auth-permanent-address">स्थायी ठेगाना</label>
+                    <textarea className="profile-input signup-address-input" id="auth-permanent-address" rows={2} maxLength={500} autoComplete="street-address" value={permanentAddress} onChange={(event) => { setPermanentAddress(event.target.value); setNotice(null); }} placeholder="प्रदेश, जिल्ला, पालिका, वडा र टोल" />
+
+                    <label className="same-address-row"><input type="checkbox" checked={sameAsPermanent} onChange={(event) => { setSameAsPermanent(event.target.checked); setNotice(null); }} /><span><strong>हालको ठेगाना स्थायी ठेगानासँग उही छ</strong><small>फरक भएमा तल अस्थायी ठेगाना लेख्नुहोस्।</small></span></label>
+
+                    {!sameAsPermanent && <><label htmlFor="auth-temporary-address">अस्थायी / हालको ठेगाना</label><textarea className="profile-input signup-address-input" id="auth-temporary-address" rows={2} maxLength={500} autoComplete="street-address" value={temporaryAddress} onChange={(event) => { setTemporaryAddress(event.target.value); setNotice(null); }} placeholder="अहिले बसोबास गर्ने पूरा ठेगाना" /></>}
+
+                    <label htmlFor="auth-church">आफ्नो मण्डली (ऐच्छिक)</label>
+                    <select className="profile-input" id="auth-church" value={signupChurchId} onChange={(event) => { setSignupChurchId(event.target.value ? Number(event.target.value) : ""); setNotice(null); }}><option value="">पछि छान्छु</option>{signupChurches.map((church) => <option key={church.church_id} value={church.church_id}>{church.church_name_ne || church.church_name}{church.address ? ` — ${church.address}` : ""}</option>)}</select>
+                    <p className="field-help">मण्डली छानेमा सदस्यता अनुरोध प्रशासककहाँ जान्छ। स्वीकृत नहुँदासम्म तपाईं सामान्य खातामै रहनुहुन्छ।</p>
                   </>
                 )}
 

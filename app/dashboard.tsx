@@ -412,7 +412,7 @@ export function ChurchDashboard(props: DashboardProps) {
       {props.screen === "more" && <MoreSettings profile={props.settingsProfile} settingsSyncState={props.settingsSyncState} onNavigate={props.onNavigate} onLanguageChange={props.onLanguageChange} onHighContrastChange={props.onHighContrastChange} onTextScaleChange={props.onTextScaleChange} onSignOut={props.onSignOut} onClearPreview={props.onClearPreview} />}
       {props.screen === "membership" && <ChurchMembership userId={props.authenticatedUserId} memberships={props.memberships} loading={props.membershipsLoading} onRefresh={props.onRefreshMemberships} onNavigate={props.onNavigate} />}
       {props.screen === "admin" && <AdminDashboard userId={props.authenticatedUserId} memberships={props.memberships} isSuperAdmin={props.isSuperAdmin} onNavigate={props.onNavigate} />}
-      {props.screen === "members" && <MemberDirectory currentName={props.name} onNavigate={props.onNavigate} />}
+      {props.screen === "members" && <MemberDirectory userId={props.authenticatedUserId} memberships={props.memberships} currentName={props.name} onNavigate={props.onNavigate} />}
       {props.screen === "assignments" && <MyAssignments name={props.name} userId={props.authenticatedUserId} memberships={props.memberships} onNavigate={props.onNavigate} />}
       {props.screen === "preparations" && <MemberPreparations userId={props.authenticatedUserId} memberships={props.memberships} onNavigate={props.onNavigate} />}
       {props.screen === "recaps" && <FellowshipRecap name={props.name} userId={props.authenticatedUserId} memberships={props.memberships} onNavigate={props.onNavigate} />}

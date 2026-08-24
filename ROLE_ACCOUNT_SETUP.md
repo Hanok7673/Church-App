@@ -57,7 +57,25 @@ They see only their assigned church and its church-level management tools. They 
 
 ### 3. Create a member account
 
-Create and confirm another normal Auth account. It initially has no church membership and no administration access.
+Create and confirm another normal Auth account. During Church App signup, complete the private member form:
+
+1. Full name and date of birth.
+2. Nepal mobile number.
+3. Gender.
+4. Permanent address.
+5. Temporary/current address, or tick **same as permanent address**.
+6. Optionally choose the church the member attends.
+
+Phone, date of birth, gender, and both addresses are stored in `profile_private`. They are not returned by the member-directory API. Selecting a church creates only a pending request; it never grants an administrator or leader role.
+
+The normal approval path is:
+
+1. The member chooses the church during signup, or later at `#membership`.
+2. The church owner/administrator signs in and opens `#admin`.
+3. Under **“नयाँ सदस्यता अनुरोध”**, review the name and approve or reject it.
+4. Approval creates an active `member` membership. The person then appears in the real same-church directory at `#members`.
+
+An invitation code remains available as a faster trusted path:
 
 1. Sign in as the church administrator and open `#admin`.
 2. Generate a **member** or **leader** invitation code.
@@ -65,7 +83,7 @@ Create and confirm another normal Auth account. It initially has no church membe
 4. Open `http://127.0.0.1:3000/#membership`.
 5. Redeem the invitation code.
 
-The member can use church content and their own assignments, preparations, recaps, and attendance. Opening `#admin` returns an authorization-denied screen.
+The invitation path activates the invited role immediately. The member can then use church content and their own assignments, preparations, recaps, and attendance. Opening `#admin` as a normal member returns an authorization-denied screen.
 
 ## Testing multiple accounts in Chrome
 
@@ -82,11 +100,11 @@ Suggested test URLs:
 - Member membership: `http://127.0.0.1:3000/#membership`
 - Member attendance: `http://127.0.0.1:3000/#attendance`
 
-## Clean restart completed
+## Historical clean restart
 
 The 2026-08-24 audit found three confirmed Auth accounts and zero `platform_roles` rows. Each account had created a separate church and was therefore an `owner`; none was a true platform super admin. With the project owner's approval, all three accounts, sessions, churches, and dependent membership data were deleted after the corrected role rules were deployed.
 
-The project now has zero Auth users, profiles, platform roles, churches, memberships, fellowships, and preparation posts. Start with step 1 above and create a dedicated platform account first.
+That cleanup is historical; accounts and the **Test** church were subsequently recreated for acceptance testing. The current database, not this note, is the source of truth.
 
 ## Preparation-post visibility
 
@@ -102,5 +120,5 @@ The project now has zero Auth users, profiles, platform roles, churches, members
 - Never store role authorization in user-editable `user_metadata`.
 - Do not manually make every Auth user a super admin.
 - Use the super-admin provisioning form for new churches and church administrators.
-- Use church invitation codes for leaders and members.
+- Use self-selected pending requests for ordinary members. Use invitation codes when a trusted administrator wants immediate member/leader activation.
 - Sign out and back in after a trusted role change so the application reloads the current authorization state.

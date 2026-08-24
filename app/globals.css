@@ -14,6 +14,55 @@
   --error: #a93d35;
 }
 
+/* Church application onboarding and real member directory */
+.signup-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.signup-field-grid label { display: grid; gap: 7px; }
+.signup-address-input { min-height: 74px; resize: vertical; font: inherit; padding-top: 12px; }
+.same-address-row { display: flex !important; align-items: flex-start; gap: 12px; padding: 13px 14px; border: 1px solid var(--line, #d9e1df); border-radius: 16px; background: #f7faf9; cursor: pointer; }
+.same-address-row input { width: 18px; height: 18px; margin-top: 2px; accent-color: #087b78; }
+.same-address-row span { display: grid; gap: 3px; }
+.same-address-row small { color: #6b7777; font-weight: 500; }
+.church-application-card select,
+.directory-church-picker select { width: 100%; border: 1px solid #cfd9d7; border-radius: 14px; background: #fff; color: #183032; padding: 13px 14px; font: inherit; }
+.membership-request-list { display: grid; gap: 10px; margin-top: 18px; }
+.membership-request-list > div { display: flex; justify-content: space-between; align-items: center; }
+.membership-request-list > div h2 { margin: 0; font-size: 1.08rem; }
+.membership-request-list article { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border: 1px solid #dbe2e0; border-radius: 17px; background: #fff; }
+.membership-request-list article p { display: grid; gap: 3px; margin: 0; }
+.membership-request-list article small { color: #6c7777; }
+.membership-request-list article em { color: #46595a; font-style: normal; font-size: .88rem; margin-top: 4px; }
+.membership-request-status { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; font-size: .72rem; font-weight: 800; background: #fff4d6; color: #8d6200; }
+.membership-request-status.approved { background: #dcf4e9; color: #17684b; }
+.membership-request-status.rejected { background: #fde7e5; color: #9c3f37; }
+.membership-approval-card { display: grid; gap: 12px; padding: 15px; border: 1px solid #dbe2e0; border-radius: 17px; background: #fff; margin-top: 12px; }
+.membership-request-person { display: flex; align-items: center; gap: 11px; }
+.membership-request-person > span { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 14px; background: #d9f1ef; color: #096b69; font-weight: 900; }
+.membership-request-person p { display: grid; gap: 2px; margin: 0; }
+.membership-request-person small { color: #718080; }
+.membership-approval-card textarea { width: 100%; resize: vertical; border: 1px solid #d6dfdd; border-radius: 13px; padding: 10px 12px; font: inherit; }
+.member-directory-content { padding: 18px 22px 96px; }
+.directory-summary-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 17px; border-radius: 20px; color: #fff; background: linear-gradient(135deg, #075f63, #178c84); }
+.directory-summary-card > span { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 14px; background: rgba(255,255,255,.17); font-size: 1.3rem; }
+.directory-summary-card div { display: grid; gap: 2px; }
+.directory-summary-card p, .directory-summary-card h1 { margin: 0; }
+.directory-summary-card p, .directory-summary-card small { color: rgba(255,255,255,.78); }
+.directory-summary-card h1 { font-size: 1.18rem; }
+.directory-summary-card > strong { font-size: 1.45rem; }
+.directory-church-picker { display: grid; gap: 7px; margin-top: 15px; font-weight: 750; }
+.directory-search { display: flex; align-items: center; gap: 9px; margin: 15px 0; border: 1px solid #d4dedd; border-radius: 15px; padding: 0 13px; background: #fff; }
+.directory-search input { width: 100%; border: 0; outline: 0; padding: 13px 0; background: transparent; font: inherit; }
+.real-member-list { display: grid; gap: 10px; }
+.real-member-list article { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 13px; border: 1px solid #dce3e1; border-radius: 17px; background: #fff; }
+.member-avatar { display: grid; place-items: center; flex: 0 0 47px; height: 47px; overflow: hidden; border-radius: 15px; background: #dff2f0; color: #086966; font-weight: 900; }
+.member-avatar.role-owner, .member-avatar.role-admin { background: #fff0ce; color: #896000; }
+.member-avatar.role-leader { background: #e4ebff; color: #405aa1; }
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.real-member-list article p { display: grid; gap: 3px; min-width: 0; margin: 0; }
+.real-member-list article strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.real-member-list article small { color: #6c7979; }
+.current-member-pill { margin-left: auto; border-radius: 999px; padding: 5px 8px; background: #e6f5ef; color: #207154; font-size: .72rem; font-weight: 800; }
+@media (max-width: 520px) { .signup-field-grid { grid-template-columns: 1fr; } }
+
 * {
   box-sizing: border-box;
 }

@@ -421,6 +421,21 @@ Last updated: 2026-08-23
 - [ ] Accessibility, permission, data integrity, and security checks.
 - [ ] Production data migration, deployment, and handoff notes.
 
+### Batch 7 member onboarding — church choice, approval, and private signup profile (complete)
+
+- [x] Added complete secure-account signup fields for date of birth, Nepal phone, gender, permanent address, and temporary/current address with a “same as permanent” option.
+- [x] Kept these fields in the owner-only `profile_private` record and out of the same-church member directory response.
+- [x] Added a limited active-church catalog to signup and `#membership`; choosing a church creates a pending ordinary-member request and never grants elevated authority.
+- [x] Added pending/approved/rejected request history for each member, including the optional administrator review note.
+- [x] Added a same-church owner/admin approval queue at `#admin`; approval atomically activates a `member` membership, while rejection creates no membership.
+- [x] Preserved invitation codes as the immediate trusted activation path for explicit member/leader invitations.
+- [x] Replaced the fictional member preview with the real `list_church_members` directory, fixing the case where Simran had an active Test-church membership but was hidden by placeholder data.
+- [x] Applied `20260824122500_member_church_application_onboarding.sql` and the private implementation/public invoker hardening migration `20260824131000_joinable_church_catalog_security_wrapper.sql`.
+- [x] Ran a rollback-only end-to-end database test proving pending request → owner approval → ordinary member membership → directory visibility, with private address storage and zero leftover test rows.
+- [x] Passed targeted ESLint, the production build, and all 11 route/workflow tests. Security advisor findings introduced by the public church catalog were removed; only the project-level leaked-password-protection setting remains disabled.
+- [ ] User acceptance test: sign up a new member, choose **Test**, approve from the Test church admin at `#admin`, then confirm the member appears at `#members`.
+- [ ] Next batch: account profile editing, controlled member-role promotion, or full multi-role mobile/desktop acceptance testing.
+
 ## Decisions and safeguards
 
 - Supabase database password must never be exposed in browser bundles, committed files, screenshots, or logs.

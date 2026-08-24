@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase";
 import type { DashboardScreen } from "./dashboard";
 
@@ -16,6 +16,25 @@ export type AccountMembership = {
 };
 
 type MembershipNotice = { tone: "success" | "error" | "info"; text: string } | null;
+
+type JoinableChurch = {
+  church_id: number;
+  church_name: string;
+  church_name_ne: string | null;
+  address: string | null;
+};
+
+type MembershipRequest = {
+  request_id: number;
+  church_id: number;
+  church_name: string;
+  church_name_ne: string | null;
+  request_status: "pending" | "approved" | "rejected";
+  requested_role: string;
+  review_note: string | null;
+  created_at: string;
+  reviewed_at: string | null;
+};
 
 const ROLE_LABELS: Record<AccountMembership["role"], string> = {
   owner: "मुख्य मण्डली प्रशासक",
@@ -47,8 +66,77 @@ export function ChurchMembership({ userId, memberships, loading, onRefresh, onNa
   const [inviteCode, setInviteCode] = useState("");
   const [notice, setNotice] = useState<MembershipNotice>(null);
   const [busy, setBusy] = useState(false);
+  const [churches, setChurches] = useState<JoinableChurch[]>([]);
+  const [requests, setRequests] = useState<MembershipRequest[]>([]);
+  const [selectedChurchId, setSelectedChurchId] = useState<number | "">("");
   const primaryMembership = memberships[0] ?? null;
   const canOpenAdmin = primaryMembership?.role === "owner" || primaryMembership?.role === "admin";
+  const availableChurches = useMemo(() => {
+    const activeChurchIds = new Set(memberships.map((membership) => membership.churchId));
+    const pendingChurchIds = new Set(requests.filter((request) => request.request_status === "pending").map((request) => request.church_id));
+    return churches.filter((church) => !activeChurchIds.has(church.church_id) && !pendingChurchIds.has(church.church_id));
+  }, [churches, memberships, requests]);
+
+  async function refreshApplications() {
+    const client = getSupabaseBrowserClient();
+    if (!client || !userId) {
+      setChurches([]);
+      setRequests([]);
+      return;
+    }
+    const [churchResult, requestResult] = await Promise.all([
+      client.rpc("list_joinable_churches"),
+      client.rpc("list_my_membership_requests"),
+    ]);
+    setChurches((churchResult.data ?? []) as JoinableChurch[]);
+    setRequests((requestResult.data ?? []) as MembershipRequest[]);
+    if (churchResult.error || requestResult.error) {
+      setNotice({ tone: "error", text: "मण्डली सूची वा तपाईंको अनुरोध अवस्था लोड गर्न सकिएन।" });
+    }
+  }
+
+  useEffect(() => {
+    let active = true;
+    const client = getSupabaseBrowserClient();
+    if (!client || !userId) {
+      const timer = window.setTimeout(() => {
+        if (!active) return;
+        setChurches([]);
+        setRequests([]);
+      }, 0);
+      return () => { active = false; window.clearTimeout(timer); };
+    }
+    void Promise.all([
+      client.rpc("list_joinable_churches"),
+      client.rpc("list_my_membership_requests"),
+    ]).then(([churchResult, requestResult]) => {
+      if (!active) return;
+      setChurches((churchResult.data ?? []) as JoinableChurch[]);
+      setRequests((requestResult.data ?? []) as MembershipRequest[]);
+      if (churchResult.error || requestResult.error) setNotice({ tone: "error", text: "मण्डली सूची वा तपाईंको अनुरोध अवस्था लोड गर्न सकिएन।" });
+    });
+    return () => { active = false; };
+  }, [userId]);
+
+  async function requestMembership(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const client = getSupabaseBrowserClient();
+    if (!client || !userId || selectedChurchId === "") {
+      setNotice({ tone: "error", text: "पहिले आफू सामेल हुन चाहेको मण्डली छान्नुहोस्।" });
+      return;
+    }
+    setBusy(true);
+    setNotice(null);
+    const { error } = await client.from("membership_join_requests").insert({ user_id: userId, church_id: selectedChurchId });
+    if (error) {
+      setNotice({ tone: "error", text: error.message.toLowerCase().includes("pending") ? "यो मण्डलीका लागि तपाईंको अनुरोध पहिले नै समीक्षा हुँदैछ।" : "सदस्यता अनुरोध पठाउन सकिएन। फेरि प्रयास गर्नुहोस्।" });
+    } else {
+      setSelectedChurchId("");
+      setNotice({ tone: "success", text: "सदस्यता अनुरोध पठाइयो। मण्डली प्रशासकले स्वीकृत गरेपछि सदस्य सूची र सामग्री खुल्नेछ।" });
+      await refreshApplications();
+    }
+    setBusy(false);
+  }
 
   async function joinChurch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +158,7 @@ export function ChurchMembership({ userId, memberships, loading, onRefresh, onNa
     } else {
       setInviteCode("");
       setNotice({ tone: "success", text: "मण्डली सदस्यता सुरक्षित रूपमा जोडियो।" });
-      await onRefresh();
+      await Promise.all([onRefresh(), refreshApplications()]);
     }
     setBusy(false);
   }
@@ -107,6 +195,8 @@ export function ChurchMembership({ userId, memberships, loading, onRefresh, onNa
 
                 {canOpenAdmin && <button className="admin-route-link" type="button" onClick={() => onNavigate("admin")}><span aria-hidden="true">⚙</span><span><small>मालिक / प्रशासक मात्र</small><strong>प्रशासन प्यानल खोल्नुहोस्</strong><em>सदस्य निमन्त्रणा, मण्डली र आगामी व्यवस्थापन</em></span><b aria-hidden="true">›</b></button>}
 
+                <ChurchApplicationForm churches={availableChurches} selectedChurchId={selectedChurchId} setSelectedChurchId={setSelectedChurchId} busy={busy} onSubmit={requestMembership} />
+
                 <section className="membership-form-card compact-join-card">
                   <div className="membership-section-heading"><span>⌁</span><div><p>अर्को मण्डली</p><h2>अर्को निमन्त्रणा प्रयोग गर्नुहोस्</h2></div></div>
                   <JoinCodeForm inviteCode={inviteCode} setInviteCode={setInviteCode} busy={busy} onSubmit={joinChurch} />
@@ -114,10 +204,12 @@ export function ChurchMembership({ userId, memberships, loading, onRefresh, onNa
               </>
             ) : (
               <>
-                <section className="membership-empty-card"><span aria-hidden="true">⌂</span><h1>अहिलेसम्म मण्डली जोडिएको छैन</h1><p>सामान्य खाता खोल्दा कुनै प्रशासन भूमिका पाइँदैन। आफ्नो मण्डली प्रशासकबाट सुरक्षित सदस्य निमन्त्रणा कोड माग्नुहोस्।</p></section>
-                <section className="membership-form-card"><div className="membership-section-heading"><span>⌁</span><div><p>सदस्य पहुँच</p><h2>सुरक्षित कोड लेख्नुहोस्</h2></div></div><JoinCodeForm inviteCode={inviteCode} setInviteCode={setInviteCode} busy={busy} onSubmit={joinChurch} /><p className="membership-form-help role-boundary-help">नयाँ मण्डली प्लेटफर्म सुपर एडमिनले मात्र दर्ता गर्छ र छुट्टै मण्डली प्रशासक खाता तोक्छ।</p></section>
+                <section className="membership-empty-card"><span aria-hidden="true">⌂</span><h1>अहिलेसम्म मण्डली जोडिएको छैन</h1><p>तलको सूचीबाट आफ्नो मण्डली छानेर अनुरोध पठाउनुहोस्। प्रशासकले स्वीकृत गरेपछि तपाईं सक्रिय सदस्य बन्नुहुन्छ।</p></section>
+                <ChurchApplicationForm churches={availableChurches} selectedChurchId={selectedChurchId} setSelectedChurchId={setSelectedChurchId} busy={busy} onSubmit={requestMembership} />
+                <section className="membership-form-card"><div className="membership-section-heading"><span>⌁</span><div><p>निमन्त्रणा छ?</p><h2>सुरक्षित कोड लेख्नुहोस्</h2></div></div><JoinCodeForm inviteCode={inviteCode} setInviteCode={setInviteCode} busy={busy} onSubmit={joinChurch} /><p className="membership-form-help role-boundary-help">मान्य निमन्त्रणा कोडले तुरुन्त सदस्यता सक्रिय गर्छ। सूचीबाट पठाइएको अनुरोधलाई मण्डली प्रशासकले समीक्षा गर्छ।</p></section>
               </>
             )}
+            {requests.length > 0 && <section className="membership-request-list"><div><h2>मेरो सदस्यता अनुरोध</h2><span>{requests.length.toLocaleString("ne-NP")}</span></div>{requests.map((request) => <article key={request.request_id}><span className={`membership-request-status ${request.request_status}`}>{request.request_status === "pending" ? "समीक्षामा" : request.request_status === "approved" ? "स्वीकृत" : "अस्वीकृत"}</span><p><strong>{request.church_name_ne || request.church_name}</strong><small>{formatDate(request.created_at)} मा पठाइएको</small>{request.review_note && <em>{request.review_note}</em>}</p></article>)}</section>}
             {notice && <p className={`membership-notice ${notice.tone}`} role={notice.tone === "error" ? "alert" : "status"}>{notice.text}</p>}
           </>
         )}
@@ -132,6 +224,16 @@ export function ChurchMembership({ userId, memberships, loading, onRefresh, onNa
       </nav>
     </div>
   );
+}
+
+function ChurchApplicationForm({ churches, selectedChurchId, setSelectedChurchId, busy, onSubmit }: {
+  churches: JoinableChurch[];
+  selectedChurchId: number | "";
+  setSelectedChurchId: (value: number | "") => void;
+  busy: boolean;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return <section className="membership-form-card church-application-card"><div className="membership-section-heading"><span>⌂</span><div><p>सजिलो सदस्यता</p><h2>आफ्नो मण्डली छान्नुहोस्</h2></div></div>{churches.length === 0 ? <p className="membership-form-help">अहिले छान्न मिल्ने नयाँ मण्डली छैन वा तपाईंको अनुरोध समीक्षा हुँदैछ।</p> : <form onSubmit={onSubmit}><label htmlFor="membership-church-select">मण्डली</label><select id="membership-church-select" value={selectedChurchId} onChange={(event) => setSelectedChurchId(event.target.value ? Number(event.target.value) : "")}><option value="">मण्डली छान्नुहोस्…</option>{churches.map((church) => <option key={church.church_id} value={church.church_id}>{church.church_name_ne || church.church_name}{church.address ? ` — ${church.address}` : ""}</option>)}</select><button className="membership-primary-action" type="submit" disabled={busy || selectedChurchId === ""}>{busy ? "पठाउँदै…" : "स्वीकृतिका लागि अनुरोध पठाउनुहोस्"}</button><p className="membership-form-help">अनुरोधले कुनै प्रशासन भूमिका दिँदैन। स्वीकृत भएमा सामान्य सदस्यको भूमिका मात्र सक्रिय हुन्छ।</p></form>}</section>;
 }
 
 function JoinCodeForm({ inviteCode, setInviteCode, busy, onSubmit }: {

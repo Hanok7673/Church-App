@@ -157,7 +157,7 @@ test("keeps platform, church-admin, and member account provisioning separate", a
   ]);
 
   assert.doesNotMatch(membership, /from\("churches"\)\.insert/);
-  assert.match(membership, /सामान्य खाता खोल्दा कुनै प्रशासन भूमिका पाइँदैन/);
+  assert.match(membership, /अनुरोधले कुनै प्रशासन भूमिका दिँदैन/);
   assert.match(admin, /<SuperAdminChurchProvisioner/);
   assert.match(provisioner, /rpc\("provision_church"/);
   assert.match(provisioner, /सुपर एडमिन आफैँ मण्डली प्रशासक बन्न सक्दैन/);
@@ -167,6 +167,31 @@ test("keeps platform, church-admin, and member account provisioning separate", a
   assert.match(migration, /The platform super administrator and church administrator must be different accounts/);
   assert.match(guide, /Creating a Supabase Auth user.*creates only a normal authenticated account/);
   assert.match(guide, /three Chrome profiles/);
+});
+
+test("collects private signup details and approves self-selected church memberships", async () => {
+  const [churchApp, membership, admin, directory, dashboard, migration] = await Promise.all([
+    readFile(new URL("../app/church-app.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/church-membership.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin-dashboard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/member-directory.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/dashboard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../supabase/migrations/20260824122500_member_church_application_onboarding.sql", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(churchApp, /date_of_birth: dateOfBirth/);
+  assert.match(churchApp, /permanent_address: permanentAddress\.trim\(\)/);
+  assert.match(churchApp, /temporary_address: sameAsPermanent/);
+  assert.match(churchApp, /gender,/);
+  assert.match(churchApp, /rpc\("list_joinable_churches"\)/);
+  assert.match(membership, /from\("membership_join_requests"\)\.insert\(\{ user_id: userId, church_id: selectedChurchId \}\)/);
+  assert.match(admin, /rpc\("list_pending_membership_requests"/);
+  assert.match(admin, /rpc\("review_membership_request"/);
+  assert.match(directory, /rpc\("list_church_members"/);
+  assert.match(dashboard, /<MemberDirectory userId=\{props\.authenticatedUserId\} memberships=\{props\.memberships\}/);
+  assert.match(migration, /request_status in \('pending', 'approved', 'rejected'\)/);
+  assert.match(migration, /Only an active church owner or administrator can review membership requests/);
+  assert.match(migration, /profile_private\.permanent_address is[\s\S]+never exposed by the church directory API/);
 });
 
 test("shows preparation posting only for leaders, post-holders, and assigned members", async () => {

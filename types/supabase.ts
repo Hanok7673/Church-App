@@ -846,7 +846,13 @@ export type Database = {
           id: number
           invite_id: number | null
           membership_id: number | null
+          request_status: string
+          requested_role: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           submitted_code_hash: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -855,7 +861,13 @@ export type Database = {
           id?: never
           invite_id?: number | null
           membership_id?: number | null
+          request_status?: string
+          requested_role?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           submitted_code_hash?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -864,7 +876,13 @@ export type Database = {
           id?: never
           invite_id?: number | null
           membership_id?: number | null
+          request_status?: string
+          requested_role?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           submitted_code_hash?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -1228,27 +1246,36 @@ export type Database = {
         Row: {
           created_at: string
           date_of_birth: string | null
+          gender: string | null
           high_contrast: boolean
           id: string
+          permanent_address: string | null
           phone: string | null
+          temporary_address: string | null
           text_scale_override: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           date_of_birth?: string | null
+          gender?: string | null
           high_contrast?: boolean
           id: string
+          permanent_address?: string | null
           phone?: string | null
+          temporary_address?: string | null
           text_scale_override?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           date_of_birth?: string | null
+          gender?: string | null
           high_contrast?: boolean
           id?: string
+          permanent_address?: string | null
           phone?: string | null
+          temporary_address?: string | null
           text_scale_override?: number | null
           updated_at?: string
         }
@@ -1733,6 +1760,18 @@ export type Database = {
           church_name: string
         }[]
       }
+      review_membership_request: {
+        Args: {
+          p_decision: string
+          p_request_id: number
+          p_review_note?: string | null
+        }
+        Returns: {
+          membership_id: number | null
+          request_id: number
+          request_status: string
+        }[]
+      }
       list_admin_churches: {
         Args: never
         Returns: {
@@ -1762,6 +1801,40 @@ export type Database = {
           membership_id: number
           role: string
           total_count: number
+          user_id: string
+        }[]
+      }
+      list_joinable_churches: {
+        Args: never
+        Returns: {
+          address: string | null
+          church_id: number
+          church_name: string
+          church_name_ne: string | null
+        }[]
+      }
+      list_my_membership_requests: {
+        Args: never
+        Returns: {
+          church_id: number
+          church_name: string
+          church_name_ne: string | null
+          created_at: string
+          request_id: number
+          request_status: string
+          requested_role: string
+          review_note: string | null
+          reviewed_at: string | null
+        }[]
+      }
+      list_pending_membership_requests: {
+        Args: { p_church_id: number }
+        Returns: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string
+          request_id: number
+          requested_role: string
           user_id: string
         }[]
       }

@@ -53,6 +53,15 @@ type PendingPreparation = {
   submitted_at: string;
 };
 
+type PendingMembershipRequest = {
+  request_id: number;
+  user_id: string;
+  full_name: string;
+  avatar_url: string | null;
+  requested_role: string;
+  created_at: string;
+};
+
 type AdminNotice = { tone: "success" | "error" | "info"; text: string } | null;
 
 const STATUS_LABELS: Record<string, string> = {
@@ -117,6 +126,8 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
   const [inviteList, setInviteList] = useState<InviteSummary[]>([]);
   const [fellowships, setFellowships] = useState<AdminFellowship[]>([]);
   const [pendingPreparations, setPendingPreparations] = useState<PendingPreparation[]>([]);
+  const [pendingMemberships, setPendingMemberships] = useState<PendingMembershipRequest[]>([]);
+  const [membershipReviewNotes, setMembershipReviewNotes] = useState<Record<number, string>>({});
   const [reviewNotes, setReviewNotes] = useState<Record<number, string>>({});
   const [fellowshipTitle, setFellowshipTitle] = useState("");
   const [fellowshipLocation, setFellowshipLocation] = useState("");
@@ -184,6 +195,14 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
     }
   }
 
+  async function refreshPendingMemberships(churchId: number) {
+    const client = getSupabaseBrowserClient();
+    if (!client) return;
+    const { data, error } = await client.rpc("list_pending_membership_requests", { p_church_id: churchId });
+    setPendingMemberships((data ?? []) as PendingMembershipRequest[]);
+    if (error) setNotice({ tone: "error", text: "सदस्यता अनुरोध लोड गर्न सकिएन।" });
+  }
+
   useEffect(() => {
     let active = true;
     const client = getSupabaseBrowserClient();
@@ -225,6 +244,7 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
         setInviteList([]);
         setFellowships([]);
         setPendingPreparations([]);
+        setPendingMemberships([]);
       }, 0);
       return () => {
         active = false;
@@ -244,12 +264,14 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
         .order("starts_at", { ascending: true })
         .limit(100),
       client.rpc("list_preparation_queue", { p_church_id: selectedChurch.church_id, p_limit: 100 }),
-    ]).then(([invitesResult, fellowshipsResult, queueResult]) => {
+      client.rpc("list_pending_membership_requests", { p_church_id: selectedChurch.church_id }),
+    ]).then(([invitesResult, fellowshipsResult, queueResult, membershipRequestResult]) => {
       if (!active) return;
       setInviteList(invitesResult.data ?? []);
       setFellowships((fellowshipsResult.data ?? []) as AdminFellowship[]);
       setPendingPreparations((queueResult.data ?? []) as PendingPreparation[]);
-      if (fellowshipsResult.error || queueResult.error) setNotice({ tone: "error", text: "फेलोशिप तालिका वा समीक्षा सूची लोड गर्न सकिएन।" });
+      setPendingMemberships((membershipRequestResult.data ?? []) as PendingMembershipRequest[]);
+      if (fellowshipsResult.error || queueResult.error || membershipRequestResult.error) setNotice({ tone: "error", text: "फेलोशिप तालिका वा समीक्षा सूची लोड गर्न सकिएन।" });
     });
 
     return () => { active = false; };
@@ -387,6 +409,26 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
     setBusy(false);
   }
 
+  async function reviewMembership(requestId: number, decision: "approved" | "rejected") {
+    const client = getSupabaseBrowserClient();
+    if (!client || !selectedChurch || !canManageSelectedChurch) return;
+    setBusy(true);
+    setNotice(null);
+    const { error } = await client.rpc("review_membership_request", {
+      p_request_id: requestId,
+      p_decision: decision,
+      p_review_note: membershipReviewNotes[requestId]?.trim() || null,
+    });
+    if (error) {
+      setNotice({ tone: "error", text: "सदस्यता अनुरोध समीक्षा गर्न सकिएन। अनुरोध पहिले नै समीक्षा भएको हुन सक्छ।" });
+    } else {
+      setMembershipReviewNotes((current) => { const next = { ...current }; delete next[requestId]; return next; });
+      setNotice({ tone: "success", text: decision === "approved" ? "सदस्यता स्वीकृत भयो। सदस्य अब यही मण्डलीको सूचीमा देखिन्छ।" : "सदस्यता अनुरोध अस्वीकृत गरियो।" });
+      await Promise.all([refreshPendingMemberships(selectedChurch.church_id), refreshChurches(selectedChurch.church_id)]);
+    }
+    setBusy(false);
+  }
+
   return (
     <div className="app-screen screen-enter admin-screen">
       <header className="detail-header membership-header admin-header">
@@ -437,6 +479,14 @@ export function AdminDashboard({ userId, memberships, isSuperAdmin, onNavigate }
               <button type="button" onClick={() => onNavigate("members")}><span>◎</span><strong>सदस्य</strong><small>सूची र भूमिका</small></button>
               <button type="button" onClick={() => onNavigate("preparations")}><span>✎</span><strong>सदस्य पोस्ट</strong><small>स्वीकृत फिड हेर्नुहोस्</small></button>
             </section>}
+
+            {canManageSelectedChurch && (
+              <section className="admin-section-card membership-approval-section">
+                <div className="membership-section-heading"><span>◎</span><div><p>मण्डली मालिक / प्रशासक</p><h2>नयाँ सदस्यता अनुरोध</h2></div></div>
+                <p className="membership-form-help">यस मण्डलीलाई आफैँ छानेका सदस्यलाई मात्र यहाँ समीक्षा गर्नुहोस्। स्वीकृत सदस्य सामान्य “सदस्य” भूमिकामा जोडिन्छ; प्रशासक वा अगुवा अधिकार छुट्टै दिनुपर्छ।</p>
+                {pendingMemberships.length === 0 ? <div className="moderation-empty"><span aria-hidden="true">✓</span><p><strong>नयाँ अनुरोध छैन</strong><small>कसैले यो मण्डली छानेपछि यहाँ देखिन्छ।</small></p></div> : pendingMemberships.map((request) => <article className="membership-approval-card" key={request.request_id}><div className="membership-request-person"><span>{request.full_name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("")}</span><p><strong>{request.full_name}</strong><small>{formatDateTime(request.created_at)} मा अनुरोध</small></p></div><label htmlFor={`membership-review-note-${request.request_id}`}>टिप्पणी (ऐच्छिक)</label><textarea id={`membership-review-note-${request.request_id}`} rows={2} maxLength={1000} value={membershipReviewNotes[request.request_id] ?? ""} onChange={(event) => setMembershipReviewNotes((current) => ({ ...current, [request.request_id]: event.target.value }))} placeholder="स्वीकृति वा अस्वीकृतिको छोटो कारण" /><div className="moderation-actions"><button type="button" disabled={busy} onClick={() => { void reviewMembership(request.request_id, "rejected"); }}>अस्वीकृत गर्नुहोस्</button><button type="button" className="approve" disabled={busy} onClick={() => { void reviewMembership(request.request_id, "approved"); }}>सदस्य स्वीकृत गर्नुहोस्</button></div></article>)}
+              </section>
+            )}
 
             {canManageSelectedChurch && (
               <section className="membership-form-card admin-section-card admin-schedule-section">
