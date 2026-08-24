@@ -7,13 +7,16 @@
   },
   "scripts": {
     "dev": "vite --config vite.local.config.ts --host 0.0.0.0 --port 3000 --strictPort",
+    "dev:api": "pnpm --filter @church/api dev",
+    "dev:mobile": "pnpm --filter @church/mobile start",
     "dev:cloudflare": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
     "test": "vinext build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "songs:validate": "node scripts/validate-song-catalog.mjs",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "pnpm --filter @church/database db:generate",
+    "typecheck:monorepo": "pnpm --filter @church/database --filter @church/api --filter @church/mobile typecheck"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.112.3",

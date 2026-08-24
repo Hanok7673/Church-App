@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Church App",
+    "slug": "church-app-nepal",
+    "scheme": "churchapp",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": { "typedRoutes": true },
+    "android": { "package": "com.churchapp.nepal" },
+    "ios": { "bundleIdentifier": "com.churchapp.nepal", "supportsTablet": true }
+  }
+}

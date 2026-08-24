@@ -451,3 +451,22 @@ Last updated: 2026-08-23
 - [x] Replaced the Windows local `pnpm dev` path with a lightweight vinext/Vite preview that does not start the unstable Miniflare child process.
 - [x] Preserved the Cloudflare-specific local runner as `pnpm dev:cloudflare` for environment testing.
 - [x] Confirmed the local preview serves the interactive Church App and its JavaScript assets from the same process.
+
+### Batch 8 monorepo foundation — Fastify, Drizzle, Expo, and Tamagui (complete; current stopping point)
+
+- [x] Preserved the current web/Supabase application as a working migration source and added parallel `apps/api`, `apps/mobile`, and `packages/database` workspaces.
+- [x] Translated the current business model into one declarative Drizzle PostgreSQL schema with 28 tables, constrained enums, foreign keys, church-scoped indexes, inferred shared types, and a generated SQL migration.
+- [x] Added a modular Fastify server with configuration validation, pooled PostgreSQL access, CORS, global error handling, JWT authentication, salted scrypt passwords, short access tokens, hashed rotating refresh sessions, and role guard helpers.
+- [x] Migrated the complete signup and church-membership approval vertical slice to REST: public active-church catalog, detailed private profile registration, pending ordinary-member requests, church-admin approval/rejection, and privacy-safe member directory.
+- [x] Prevented signup from granting owner/admin/super-admin roles and separated platform super-admin authority from church membership roles.
+- [x] Added an Expo Router mobile foundation using Tamagui-only UI primitives, design tokens, native light/dark themes, React Query server caching, Zustand session state, and Expo SecureStore token persistence.
+- [x] Built the premium responsive Nepali signup/church-choice screen with 44px+ controls, validation, loading/error states, same-address behavior, and pending-approval explanation.
+- [x] Removed the blocked native Argon2 build dependency and used Node's built-in cryptographic scrypt implementation with random salts and timing-safe comparison.
+- [x] Added `MONOREPO_MIGRATION.md`, environment examples, local commands, and an explicit no-cutover safety boundary.
+- [x] Passed database, API, and mobile strict TypeScript checks; generated the 28-table Drizzle SQL migration and passed the Fastify health test.
+- [x] Aligned Expo native dependencies to the SDK compatibility matrix, produced successful Android JavaScript and web production exports, and visually verified the Tamagui signup screen with no browser warnings or errors. Hermes bytecode compilation remains delegated to EAS/Linux because the local Windows Hermes compiler crashes on the large bundle.
+- [x] Added a Windows/OneDrive-safe Metro resolver for generated type-only/no-op package files that Metro's file map omits, without replacing any application runtime logic.
+- [x] Added platform-safe session persistence: encrypted Expo SecureStore on Android/iOS and localStorage only for the web preview.
+- [x] Added `CLIENT_DEMO_GUIDE.md`; the existing complete app remains the recommended client demo while the new custom PostgreSQL environment is awaiting provisioning.
+- [ ] User action: provision the custom PostgreSQL database and provide its private `DATABASE_URL`; do not place it in frontend code or commit it.
+- [ ] Next batch: migrate fellowship scheduling, assignments, preparation approvals, and role-aware notifications to Fastify/React Query/Tamagui.

@@ -1,5 +1,33 @@
 packages:
   - "."
+  - "apps/*"
+  - "packages/*"
+
+overrides:
+  "@tamagui/lucide-icons>@tamagui/core": "2.7.7"
+  "@tamagui/lucide-icons>@tamagui/helpers-icon": "2.7.7"
+
+minimumReleaseAgeExclude:
+  - '@expo/cli@57.0.18'
+  - '@expo/config-plugins@57.0.9'
+  - '@expo/config@57.0.9'
+  - '@expo/fingerprint@0.20.10'
+  - '@expo/image-utils@0.11.5'
+  - '@expo/metro-config@57.0.10'
+  - '@expo/metro-file-map@57.0.2'
+  - '@expo/metro-runtime@57.0.13'
+  - '@expo/prebuild-config@57.0.14'
+  - '@expo/require-utils@57.0.5'
+  - '@expo/ui@57.0.13'
+  - '@tanstack/query-core@5.102.2'
+  - '@tanstack/react-query@5.102.2'
+  - babel-preset-expo@57.0.8
+  - expo-asset@57.0.14
+  - expo-constants@57.0.14
+  - expo-modules-autolinking@57.0.11
+  - expo-modules-core@57.0.13
+  - expo-router@57.0.16
+  - expo@57.0.16
 
 onlyBuiltDependencies:
   - esbuild
