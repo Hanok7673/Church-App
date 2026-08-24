@@ -475,4 +475,5 @@ Last updated: 2026-08-23
 - [x] Verified the registration screen at a 390×844 viewport, including gender selection and the same-address switch, and produced successful Expo web and Android production exports.
 - [x] Aligned the mobile workspace to Expo SDK 54 for compatibility with the public physical-iPhone Expo Go client; verified the live manifest reports `SDKVersion 54.0.0` and `runtimeVersion exposdk:54.0.0`.
 - [x] Fixed the Expo Go `createTamagui() missing` render failure by resolving Tamagui core/web through one canonical Metro module instance and initializing the config before Expo Router evaluates screens.
+- [x] Added Tamagui's required `$true` defaults for the custom `size` and `space` token scales, canonicalized React/Tamagui singletons for pnpm Metro resolution, and verified the shared mobile-first screen at 390x844 on web with no console warnings or errors.
 - [ ] Next batch: migrate fellowship scheduling, assignments, preparation approvals, and role-aware notifications to Fastify/React Query/Tamagui. A separate web-specific redesign remains deferred until the mobile experience is complete.

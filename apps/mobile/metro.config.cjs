@@ -1,14 +1,27 @@
 const { getDefaultConfig } = require("expo/metro-config");
-const fs = require("node:fs");
 const path = require("node:path");
 
 const config = getDefaultConfig(__dirname);
 const canonicalModuleOrigin = path.join(__dirname, "package.json");
-const canonicalTamaguiPackages = new Set(["@tamagui/core", "@tamagui/web"]);
+const canonicalSingletonPackages = [
+  "react",
+  "react-dom",
+  "react-native",
+  "react-native-web",
+  "tamagui",
+  "@tamagui/core",
+  "@tamagui/web",
+];
+
+function isCanonicalSingleton(moduleName) {
+  return canonicalSingletonPackages.some(
+    (packageName) => moduleName === packageName || moduleName.startsWith(`${packageName}/`),
+  );
+}
 
 config.resolver.unstable_enableSymlinks = true;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (canonicalTamaguiPackages.has(moduleName)) {
+  if (isCanonicalSingleton(moduleName)) {
     return context.resolveRequest(
       { ...context, originModulePath: canonicalModuleOrigin },
       moduleName,
@@ -25,12 +38,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
   if (isExpoRouterTypeOnlyRuntime || isExpoWebLocationNoop) {
     return { filePath: path.join(__dirname, "src/metro/empty.js"), type: "sourceFile" };
-  }
-  if (moduleName === "react-dom/client") {
-    return {
-      filePath: fs.realpathSync(path.join(__dirname, "node_modules/react-dom/cjs/react-dom-client.production.js")),
-      type: "sourceFile",
-    };
   }
   return context.resolveRequest(context, moduleName, platform);
 };
