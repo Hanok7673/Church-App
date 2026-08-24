@@ -6,15 +6,15 @@ Run `pnpm dev` and open [http://127.0.0.1:3000/](http://127.0.0.1:3000/). This i
 
 Use `ROLE_ACCOUNT_SETUP.md` when demonstrating separate super-admin, church-admin, leader, and member accounts. Do not reuse one browser session for conflicting roles; use separate Chrome profiles or private windows.
 
-## New Expo/Tamagui architecture preview
+## New Expo/Tamagui mobile preview
 
 The parallel Expo application demonstrates the new premium mobile design and the first fully migrated vertical slice:
 
 1. Start the custom API with `pnpm dev:api` after configuring `apps/api/.env` with a custom PostgreSQL connection.
 2. Start Expo with `pnpm dev:mobile`.
-3. Press `w` for a browser preview, `a` for an Android emulator, or scan the QR code with an Expo-compatible device.
+3. Press `a` for an Android emulator or scan the QR code with an Expo-compatible device. Press `w` only for quick development inspection.
 
-The preview includes detailed member registration, private profile fields, optional church choice, and the pending ordinary-member approval model. Selecting a church never grants administrator or super-admin authority.
+The preview is deliberately mobile-first and includes the compact Tamagui home experience, detailed member registration, private profile fields, optional church choice, and the pending ordinary-member approval model. Selecting a church never grants administrator or super-admin authority. The browser rendering is a development preview of the same phone UI; a dedicated web layout will be designed later.
 
 ## Honest scope boundary
 

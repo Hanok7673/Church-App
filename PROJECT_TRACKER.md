@@ -469,4 +469,8 @@ Last updated: 2026-08-23
 - [x] Added platform-safe session persistence: encrypted Expo SecureStore on Android/iOS and localStorage only for the web preview.
 - [x] Added `CLIENT_DEMO_GUIDE.md`; the existing complete app remains the recommended client demo while the new custom PostgreSQL environment is awaiting provisioning.
 - [ ] User action: provision the custom PostgreSQL database and provide its private `DATABASE_URL`; do not place it in frontend code or commit it.
-- [ ] Next batch: migrate fellowship scheduling, assignments, preparation approvals, and role-aware notifications to Fastify/React Query/Tamagui.
+- [x] Corrected the Expo visual direction to mobile-first: a 480px content ceiling, compact 12–26px typography scale, tighter 16px cards, single-column phone fields, and 44px-or-larger touch targets.
+- [x] Rebuilt the Expo home screen as a compact Tamagui dashboard with a phone-native header, focused hero, and two-column quick actions instead of oversized web-style components.
+- [x] Kept every screen primitive inside Tamagui (`YStack`, `XStack`, typography, inputs, buttons, switches, and tokens); no raw React Native `View`, `Text`, or `TouchableOpacity` components were introduced.
+- [x] Verified the registration screen at a 390×844 viewport, including gender selection and the same-address switch, and produced successful Expo web and Android production exports.
+- [ ] Next batch: migrate fellowship scheduling, assignments, preparation approvals, and role-aware notifications to Fastify/React Query/Tamagui. A separate web-specific redesign remains deferred until the mobile experience is complete.
